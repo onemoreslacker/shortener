@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package shortenerpb;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/onemoreslacker/shortener/internal/api/proto/shortenerpb";
+
+service Shortener {
+  rpc ShortenURL(ShortenRequest) returns (ShortenResponse) {
+    option (google.api.http) = {
+      post: "/shorten"
+      body: "*"
+    };
+  }
+}
+
+message ShortenRequest {
+  string source_url = 1;
+}
+
+message ShortenResponse {
+  string short_url = 1;
+}

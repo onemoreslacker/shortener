@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package redirectorpb;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/onemoreslacker/shortener/internal/api/proto/redirectorpb"; 
+
+service Redirector {
+  rpc RedirectURL(RedirectRequest) returns (RedirectResponse) {
+    option (google.api.http) = {
+      get: "/{short_url}"
+    };
+  }
+}
+
+message RedirectRequest {
+  string short_url = 1;
+}
+
+message RedirectResponse {
+  string source_url = 1;
+}

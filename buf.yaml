@@ -1,0 +1,9 @@
+version: v2
+modules:
+    - path: api/proto/redirector
+    - path: api/proto/shortener
+deps:
+    - buf.build/googleapis/googleapis
+lint:
+    use:
+        - DEFAULT
