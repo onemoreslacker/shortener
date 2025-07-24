@@ -1,0 +1,24 @@
+http://localhost
+
+@shortener {
+	method POST
+	path /shorten
+}
+
+@redirector {
+	method GET
+	not path / /shorten
+}
+
+@ui {
+	method GET
+	path /
+}
+
+reverse_proxy @shortener shortener:8082
+reverse_proxy @redirector redirector:8081
+
+handle @ui {
+	root /template
+	file_server
+}
