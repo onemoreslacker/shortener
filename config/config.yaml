@@ -1,0 +1,20 @@
+database:
+    username: root
+    password: root
+    host: mongo
+    port: 27017
+    name: db
+
+serving:
+    uiHTTP: 8080
+    redirectorHTTP: 8081
+    redirectorGRPC: 9091
+    shortenerHTTP: 8082
+    shortenerGRPC: 9092
+
+collections:
+    links: links
+
+shorteningPolicy:
+    length: 6
+    baseURL: http://localhost

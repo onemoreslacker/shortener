@@ -1,0 +1,84 @@
+services:
+    mongo:
+        image: mongo
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+            MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+        volumes:
+            - mongo_data:/data/db
+        command: mongod --quiet --logpath /dev/null 
+        healthcheck:
+            test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017 --quiet
+            interval: 5s
+            timeout: 3s
+            retries: 5
+        networks:
+            - app
+
+    redirector:
+        build:
+            context: ..
+            dockerfile: ./deploy/redirector.Dockerfile
+        ports:
+            - "8081:8081"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+            interval: 5s
+            timeout: 3s
+            retries: 5
+        depends_on:
+            mongo: 
+                condition: service_healthy
+        restart: unless-stopped
+        env_file: .env
+        networks:
+            - app
+    
+    shortener:
+        build:
+            context: ..
+            dockerfile: ./deploy/shortener.Dockerfile
+        ports:
+            - "8082:8082"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+            interval: 5s
+            timeout: 3s
+            retries: 5
+        depends_on:
+            mongo: 
+                condition: service_healthy
+        restart: unless-stopped
+        env_file: .env
+        networks:
+            - app
+
+    caddy:
+        image: caddy:2.10
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ../Caddyfile:/etc/caddy/Caddyfile
+            - ../template:/template
+            - caddy_data:/data
+            - caddy_config:/config
+        depends_on:
+            redirector:
+                condition: service_healthy
+            shortener:
+                condition: service_healthy
+        networks:
+            - app
+
+volumes:
+    caddy_data:
+    caddy_config:
+    mongo_data:
+
+networks:
+    app:
+        driver: bridge
