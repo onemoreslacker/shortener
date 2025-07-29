@@ -11,6 +11,7 @@ serving:
     redirectorGRPC: 9091
     shortenerHTTP: 8082
     shortenerGRPC: 9092
+    metricsHTTP: 8090
 
 collections:
     links: links

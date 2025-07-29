@@ -25,6 +25,7 @@ type (
 		RedirectorGRPC string `env:"REDIRECTOR_GRPC" yaml:"redirectorGRPC" envDefault:"9091"`
 		ShortenerHTTP  string `env:"SHORTENER_HTTP" yaml:"shortenerHTTP" envDefault:"8082"`
 		ShortenerGRPC  string `env:"SHORTENER_GRPC" yaml:"shortenerGRPC" envDefault:"9092"`
+		MetricsHTTP    string `env:"METRICS_HTTP" yaml:"metricsHTTP" envDefault:"8090"`
 	}
 
 	Collections struct {

@@ -10,6 +10,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/onemoreslacker/shortener/config"
 	rpb "github.com/onemoreslacker/shortener/internal/api/proto/redirectorpb"
+	metrics "github.com/onemoreslacker/shortener/internal/infrastructure/metrics/redirector"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -22,6 +23,7 @@ func NewHTTPProxy(
 	lc fx.Lifecycle,
 	shutdowner fx.Shutdowner,
 	_ *grpc.Server,
+	_ metrics.Server,
 	cfg *config.Config,
 	log *zap.Logger,
 ) *http.Server {
@@ -37,7 +39,7 @@ func NewHTTPProxy(
 				w.WriteHeader(http.StatusOK)
 				return
 			}
-			mux.ServeHTTP(w, r)
+			metrics.Middleware(mux).ServeHTTP(w, r)
 		}),
 	}
 

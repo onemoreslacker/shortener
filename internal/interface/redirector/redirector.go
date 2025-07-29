@@ -38,7 +38,6 @@ func (s *Server) RedirectURL(ctx context.Context, req *rpb.RedirectRequest) (*rp
 
 		if !errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, status.Errorf(codes.Internal, "failed to get source url")
-
 		}
 
 		return nil, status.Errorf(codes.NotFound, "short url not found")

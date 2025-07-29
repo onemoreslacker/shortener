@@ -1,0 +1,11 @@
+global:
+    scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "redirector_app"
+    static_configs:
+        - targets: ["redirector:8090"]
+
+  - job_name: "shortener_app"
+    static_configs:
+        - targets: ["shortener:8090"]   
