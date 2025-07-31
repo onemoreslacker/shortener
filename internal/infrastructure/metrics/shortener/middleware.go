@@ -17,12 +17,13 @@ var (
 		},
 		[]string{"code", "endpoint"},
 	)
-	RequestDuration = prometheus.NewSummary(
+	RequestDuration = prometheus.NewSummaryVec(
 		prometheus.SummaryOpts{
 			Name:       "http_request_duration_shortener",
 			Help:       "duration of the http request in shortener app",
 			Objectives: map[float64]float64{0.5: 0.05, 0.9: 0.01, 0.99: 0.001},
 		},
+		[]string{"code", "endpoint"},
 	)
 )
 
@@ -33,11 +34,12 @@ func Middleware(next http.Handler) http.Handler {
 		lrw := negroni.NewResponseWriter(w)
 		next.ServeHTTP(lrw, r)
 
-		RequestsTotal.With(prometheus.Labels{
+		labels := prometheus.Labels{
 			"code":     strconv.Itoa(lrw.Status()),
 			"endpoint": r.RequestURI,
-		}).Inc()
+		}
 
-		RequestDuration.Observe(time.Since(then).Seconds())
+		RequestsTotal.With(labels).Inc()
+		RequestDuration.With(labels).Observe(time.Since(then).Seconds())
 	})
 }
